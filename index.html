@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>
+    (function() {
+      // Load EmailJS SDK first
+      emailjs.init("U1ZqSEY0oaIua86Jq"); // Replace with your EmailJS user ID
+    })();
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Corner Time!</title>
+  <style>
+    /* Import a modern, clean font */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    /* CSS Variables for easy theme customization */
+    :root {
+      --primary: #4CAF50;
+      --secondary: #FF6F61;
+      --bg-color: #f0f0f0;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      --font-family: 'Poppins', sans-serif;
+      --gradient-start: #ff7e5f;
+      --gradient-end: #feb47b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      background-size: 400% 400%;
+      animation: gradientAnimation 15s ease infinite;
+      color: #333;
+    }
+
+    /* Animated gradient background */
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Card styling for configuration, session, and report views */
+    #config, #session, #report {
+      background: var(--card-bg);
+      padding: 30px;
+      margin: 20px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      max-width: 600px;
+      width: 90%;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      animation: fadeIn 0.8s ease-out;
+      transition: transform 0.3s ease;
+    }
+
+    #config:hover, #session:hover, #report:hover {
+      transform: translateY(-5px);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Heading styles */
+    h1, h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    /* Form label styling */
+    form label {
+      display: block;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+
+    /* Input styling */
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin-top: 5px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+    }
+
+    /* Button styling */
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--primary);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      filter: brightness(90%);
+      transform: scale(1.03);
+    }
+
+    /* Video styling */
+    #video {
+      width: 100%;
+      margin-top: 20px;
+      border: 2px solid #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    #video:hover {
+      transform: scale(1.02);
+    }
+
+    /* Movement indicator styling */
+    #movementIndicator {
+      width: 100%;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.5);
+      margin-top: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    #movementBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #76c7c0, #4ba3a1);
+      transition: width 0.2s ease;
+    }
+
+    /* Timer styling */
+    #timer {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      #config, #session, #report {
+        margin: 10px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Configuration Screen -->
+  <div id="config">
+    <h1>Corner Time!</h1>
+<h2> (Timeout facing <br> the Wall or the Corner <br> as Punishment)</h2>
+    <form id="configForm">
+      <label>
+        Name:
+        <input type="text" id="userName" placeholder="Your Name" required />
+      </label>
+      <label>
+        Reason for Punishment:
+        <input type="text" id="punishmentReason" placeholder="E.g., Getting distracted" />
+      </label>
+      <label>
+        Session Duration (minutes):
+        <input type="number" id="sessionDuration" min="1" max="120" value="5" required />
+      </label>
+      <button type="submit">Start Session</button>
+    </form>
+    <video id="video" autoplay muted playsinline></video>
+  </div>
+
+  <!-- Session View -->
+  <div id="session" style="display:none;">
+    <h2 id="sessionStatus">Session in Progress</h2>
+    <p>Time Remaining: <span id="timer">--:--</span></p>
+    <div id="movementIndicator">
+      <div id="movementBar"></div>
+    </div>
+  </div>
+
+  <!-- Report View -->
+  <div id="report" style="display:none;">
+    <h2>Session Report</h2>
+    <p id="reportText"></p>
+    <button id="downloadReport">Download Report</button>
+    <button id="restartSession">Restart Session</button>
+  </div>
+
+  <!-- Hidden canvas for motion detection -->
+  <canvas id="motionCanvas" style="display:none;"></canvas>
+
+  <script>
+    let video = document.getElementById('video');
+    let configForm = document.getElementById('configForm');
+    let sessionDiv = document.getElementById('session');
+    let reportDiv = document.getElementById('report');
+    let timerDisplay = document.getElementById('timer');
+    let movementBar = document.getElementById('movementBar');
+    let reportText = document.getElementById('reportText');
+    let downloadReportButton = document.getElementById('downloadReport');
+    let restartSessionButton = document.getElementById('restartSession');
+    let motionCanvas = document.getElementById('motionCanvas');
+    let ctx = motionCanvas.getContext('2d');
+
+    let stream = null;
+    let lastImageData = null;
+    // Fixed sensitivity: lower threshold value for more sensitive detection
+    let sensitivityThreshold = 3;
+    let sessionDuration = 5; // in minutes (set from form)
+    let sessionTimer;
+    let remainingTime; // in seconds
+    let motionDetectionInterval;
+    let movementEvents = [];
+    let sessionStartedAt;
+    let configData = {};
+    let lastPenaltyTime = 0; // To throttle penalty additions
+    const penaltySeconds = 5; // Seconds to add on motion penalty
+    let lastSpeakTime = 0;   // To throttle "Don't move!" speech (5 sec throttle)
+
+    // Set up the webcam stream
+    async function setupCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.play();
+      } catch (err) {
+        alert('Error accessing webcam: ' + err);
+      }
+    }
+
+    // Compare current video frame to the previous frame to detect motion
+    function detectMotion() {
+      if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
+      motionCanvas.width = video.videoWidth;
+      motionCanvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, motionCanvas.width, motionCanvas.height);
+      let currentImageData = ctx.getImageData(0, 0, motionCanvas.width, motionCanvas.height);
+      if (lastImageData) {
+        let diff = 0;
+        for (let i = 0; i < currentImageData.data.length; i += 4) {
+          let rDiff = Math.abs(currentImageData.data[i] - lastImageData.data[i]);
+          let gDiff = Math.abs(currentImageData.data[i + 1] - lastImageData.data[i + 1]);
+          let bDiff = Math.abs(currentImageData.data[i + 2] - lastImageData.data[i + 2]);
+          let avgDiff = (rDiff + gDiff + bDiff) / 3;
+          diff += avgDiff;
+        }
+        let avgDiffPerPixel = diff / (currentImageData.data.length / 4);
+        // Calculate the threshold (with sensitivityThreshold=3, threshold is a derived value)
+        let motionThreshold = (sensitivityThreshold / 100) * 50;
+        let movementPercentage = Math.min((avgDiffPerPixel / 50) * 100, 100);
+        movementBar.style.width = movementPercentage + '%';
+
+        if (avgDiffPerPixel > motionThreshold) {
+          movementEvents.push({
+            time: Math.floor(Date.now() / 1000) - sessionStartedAt,
+            intensity: avgDiffPerPixel
+          });
+          triggerBeep();
+          let now = Date.now();
+          // Only speak "Don't move!" if 5 seconds have passed since the last speech
+          if (now - lastSpeakTime > 5000) {
+            speak("Don't move!");
+            lastSpeakTime = now;
+          }
+          // Apply penalty time if at least 1 second has passed since the last penalty
+          if (now - lastPenaltyTime > 1000) {
+            remainingTime += penaltySeconds;
+            lastPenaltyTime = now;
+          }
+        }
+      }
+      lastImageData = currentImageData;
+    }
+
+    // Generate a beep sound using the Web Audio API
+    function triggerBeep() {
+      let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      let oscillator = audioCtx.createOscillator();
+      let gainNode = audioCtx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+        audioCtx.close();
+      }, 300);
+    }
+
+    // Use the Speech Synthesis API to speak text aloud
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        let utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    // Start the punishment session and send an email with the name and reason
+    function startSession() {
+      sessionStartedAt = Math.floor(Date.now() / 1000);
+      remainingTime = sessionDuration * 60;
+      document.getElementById('config').style.display = 'none';
+      sessionDiv.style.display = 'block';
+
+      speak("Stand in your corner and do not move for " + sessionDuration + " minutes.");
+
+      sessionTimer = setInterval(() => {
+        remainingTime--;
+        let minutes = Math.floor(remainingTime / 60);
+        let seconds = remainingTime % 60;
+        timerDisplay.textContent =
+          (minutes < 10 ? "0" + minutes : minutes) +
+          ":" +
+          (seconds < 10 ? "0" + seconds : seconds);
+        if (remainingTime <= 0) {
+          endSession();
+        }
+      }, 1000);
+
+      motionDetectionInterval = setInterval(detectMotion, 200);
+
+      // Send email on session start
+      sendEmail(configData.userName, configData.punishmentReason);
+    }
+
+    // Send an email using EmailJS
+    function sendEmail(name, reason) {
+      let templateParams = {
+        user_name: name,
+        punishment_reason: reason,
+        to_email: "aishikdutta1000@gmail.com" // Change to your actual email
+      };
+      
+      emailjs.send("service_saekrsw", "template_1tkqili", templateParams)
+        .then(function(response) {
+          console.log("Email sent successfully:", response);
+        }, function(error) {
+          console.error("Error sending email:", error);
+        });
+    }
+
+    // End the session, stop processes, and show a report
+    function endSession() {
+      clearInterval(sessionTimer);
+      clearInterval(motionDetectionInterval);
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      speak("Session complete. Well done.");
+      sessionDiv.style.display = 'none';
+      reportDiv.style.display = 'block';
+
+      let reportContent = "Name: " + configData.userName + "\n";
+      reportContent += "Reason: " + configData.punishmentReason + "\n";
+      reportContent += "Session Duration (original): " + sessionDuration + " minutes\n";
+      reportContent += "Movement events detected: " + movementEvents.length + "\n";
+      if (movementEvents.length > 0) {
+        reportContent += "Event details (time in seconds, intensity):\n";
+        movementEvents.forEach((event) => {
+          reportContent += "- " + event.time + " sec, intensity: " + event.intensity.toFixed(2) + "\n";
+        });
+      }
+      reportText.textContent = reportContent;
+      reportDiv.reportContent = reportContent;
+    }
+
+    downloadReportButton.addEventListener("click", () => {
+      let blob = new Blob([reportDiv.reportContent], { type: "text/plain" });
+      let url = URL.createObjectURL(blob);
+      let a = document.createElement("a");
+      a.href = url;
+      a.download = "corner_time_report.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    restartSessionButton.addEventListener("click", () => {
+      location.reload();
+    });
+
+    configForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      configData.userName = document.getElementById("userName").value;
+      configData.punishmentReason = document.getElementById("punishmentReason").value;
+      sessionDuration = parseInt(document.getElementById("sessionDuration").value);
+      startSession();
+    });
+
+    window.addEventListener("load", setupCamera);
+  </script>
+</body>
+</html>
