@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://corner-time.github.io/sitemap.xml
+Sitemap: https://corner-time.github.io/sitemap.html
